@@ -28,7 +28,7 @@ const Combination = ({ values = [] }) => {
           size="sm"
           icon={isOpen ? <ChevronDownIcon /> : <ChevronRightIcon />}
         />
-        {typeof values.map((v) => <Tag key={v}>{v}</Tag>)}
+        {values.map((v) => <Tag key={v}>{v}</Tag>)}
       </HStack>
       <Collapse in={isOpen} animateOpacity>
         <VStack alignItems="baseline">
@@ -82,6 +82,7 @@ const NewFlow = () => {
       setDimensions(dimensionsFromDb ? JSON.parse(dimensionsFromDb) : []);
     }
   }, []);
+  console.log(flatenedCombinations)
   return (
     <Box p={5}>
       <VStack p={10} alignItems="baseline" spacing={20}>
