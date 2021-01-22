@@ -17,7 +17,7 @@ import { ChevronRightIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import { useEffect, useState } from "react";
 const f = (a, b) => [].concat(...a.map((d) => b.map((e) => [].concat(d, e))));
 const cartesian = (a, b, ...c) => (b ? cartesian(f(a, b), ...c) : a);
-const Combination = ({ values }) => {
+const Combination = ({ values = [] }) => {
   const { isOpen, onToggle } = useDisclosure();
 
   return (
@@ -28,9 +28,7 @@ const Combination = ({ values }) => {
           size="sm"
           icon={isOpen ? <ChevronDownIcon /> : <ChevronRightIcon />}
         />
-        {values.map((v) => (
-          <Tag key={v}>{v}</Tag>
-        ))}
+        {typeof values.map((v) => <Tag key={v}>{v}</Tag>)}
       </HStack>
       <Collapse in={isOpen} animateOpacity>
         <VStack alignItems="baseline">
@@ -71,6 +69,13 @@ const NewFlow = () => {
     cartesian(
       ...dimensions.map((d) => d.values.map((v) => `${d.name}=${v}`))
     ) || [];
+  const flatenedCombinations = combinations.map((c) => {
+    if (typeof c === "string") {
+      return [c];
+    } else {
+      return c;
+    }
+  });
   useEffect(() => {
     if (typeof window !== "undefined") {
       const dimensionsFromDb = localStorage.getItem("dimensions");
@@ -82,12 +87,12 @@ const NewFlow = () => {
       <VStack p={10} alignItems="baseline" spacing={20}>
         <VStack alignItems="baseline" w="100%">
           {dimensions.map((d, i) => (
-            <Box p={2} w="100%" border="1px solid rgba(0,0,0,0.1)">
+            <Box key={i} p={2} w="100%" border="1px solid rgba(0,0,0,0.1)">
               <VStack alignItems="baseline">
                 <Heading fontSize="xl">{d.name}</Heading>
                 <HStack>
                   {d.values.map((v) => (
-                    <Tag>{v}</Tag>
+                    <Tag key={v}>{v}</Tag>
                   ))}
                 </HStack>
               </VStack>
@@ -102,6 +107,7 @@ const NewFlow = () => {
             </FormControl>
             {values.map((v, i) => (
               <Input
+                key={i}
                 value={v}
                 onChange={(e) => updateValue(e.target.value, i)}
               />
@@ -121,8 +127,8 @@ const NewFlow = () => {
 
       <Box my={2}>
         <VStack>
-          {combinations.map((c) => (
-            <Combination values={c} />
+          {flatenedCombinations.map((c, i) => (
+            <Combination values={c} key={i} />
           ))}
         </VStack>
       </Box>
